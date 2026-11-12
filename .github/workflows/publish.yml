@@ -1,46 +1,12 @@
-name: brew pr-pull
-
+name: Security hold homebrew-tap-publish.yml
+# Release/publishing credentials are intentionally unavailable until reviewed.
 on:
   workflow_dispatch:
-    inputs:
-      pull_request:
-        description: Pull request number
-        required: true
-      head_sha:
-        description: Expected pull request head commit SHA (optional)
-
+permissions:
+  contents: read
 jobs:
-  pr-pull:
+  security-hold:
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      checks: read
-      contents: write
-      issues: read
-      pull-requests: write
     steps:
-      - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up git
-        uses: Homebrew/actions/git-user-config@main
-
-      - name: Pull bottles
-        env:
-          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEAD_SHA: ${{ inputs.head_sha }}
-          PULL_REQUEST: ${{ inputs.pull_request }}
-        run: |
-          if [[ -n "$HEAD_SHA" ]]
-          then
-            brew pr-pull --debug --tap="$GITHUB_REPOSITORY" --head-sha="$HEAD_SHA" "$PULL_REQUEST"
-          else
-            brew pr-pull --debug --tap="$GITHUB_REPOSITORY" "$PULL_REQUEST"
-          fi
-
-      - name: Push commits
-        uses: Homebrew/actions/git-try-push@main
-        with:
-          branch: main
+      - name: Explain hold
+        run: echo "Automatic publication is suspended pending a least-privilege release redesign."
